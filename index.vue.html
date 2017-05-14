@@ -1,0 +1,45 @@
+<script src="https://unpkg.com/vue"></script>
+
+<div id="app">
+    <ol>
+        <li v-for="(todo, ind) in todos">
+            {{ todo.text }}
+            <button v-on:click="deleteTodo(todo.id)">Remove</button>
+        </li>
+    </ol>
+    <input type="text" id="newTodo">
+    <button v-on:click="addTodo">Add todo</button>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: function() {
+            var todos = JSON.parse(localStorage.getItem('todos')) || [];
+            return {
+                todos: todos
+            };
+        },
+        methods: {
+            addTodo: function () {
+                var inputElement = document.querySelector('#newTodo'),
+                    newItem = {
+                        id: app.$data.todos.length ? app.$data.todos[app.$data.todos.length - 1].id + 1 : 0,
+                        text: inputElement.value
+                    },
+                    ls = JSON.parse(localStorage.getItem('todos')) || [];
+                app.todos.push(newItem);
+                ls.push(newItem);
+                inputElement.value = '';
+                localStorage.setItem('todos', JSON.stringify(ls));
+            },
+            deleteTodo: function(id) {
+                app.$data.todos = app.$data.todos.filter(function(elem) {
+                    console.log(elem.id, id, elem.id !== id);
+                    return elem.id !== id;
+                });
+                localStorage.setItem('todos', JSON.stringify(app.$data.todos));
+            }
+        }
+    })
+</script>
